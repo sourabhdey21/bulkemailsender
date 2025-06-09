@@ -93,7 +93,6 @@ poetry.lock
 
 # dotenv
 .env
-.env.*
 
 # VS Code
 .vscode/
