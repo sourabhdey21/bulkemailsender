@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Welcome Card -->
+    <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
+        <div class="gradient-bg p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold">Welcome to Bulk Email Pro</h1>
+                    <p class="mt-1 text-indigo-100">Send professional emails to multiple recipients with ease</p>
+                </div>
+                <div class="hidden md:block">
+                    <i class="fas fa-paper-plane text-4xl text-white/80"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Form Card -->
+    <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
+        <div class="p-6">
+            <form method="POST" enctype="multipart/form-data" class="space-y-6" id="bulk-email-form">
+                {{ form.csrf_token }}
+                
+                <!-- Email List Upload -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-users mr-1"></i> Email List
+                    </label>
+                    <div class="mt-1 flex items-center space-x-4">
+                        <div class="flex-1">
+                            {{ form.email_list(class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 dark:file:bg-indigo-900/50 file:text-indigo-700 dark:file:text-indigo-300 hover:file:bg-indigo-100 dark:hover:file:bg-indigo-800/50", id="email_list") }}
+                        </div>
+                        <a href="/sample.csv" class="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <i class="fas fa-download mr-1"></i> Sample
+                        </a>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400" id="email-count-info">
+                        Upload an Excel or CSV file with email addresses in the first column
+                    </p>
+                </div>
+
+                <!-- Email Template -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-file-alt mr-1"></i> Email Template
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <select id="template-select" class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white">
+                            <option value="">Select a template...</option>
+                            <option value="devops">DevOps Engineer Application</option>
+                            <option value="python">Python Software Developer Application</option>
+                            <option value="kubernetes">Kubernetes Engineer Application</option>
+                            <option value="openstack">OpenStack Engineer Application</option>
+                            <option value="ceph">Ceph Storage Engineer Application</option>
+                            <option value="linux">Linux Engineer Application</option>
+                        </select>
+                        <button type="button" id="show-preview-btn" class="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <i class="fas fa-eye"></i>
+                            <span class="ml-1">Show Preview</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Subject -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-heading mr-1"></i> Subject
+                    </label>
+                    <div class="mt-1">
+                        {{ form.subject(class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white", id="subject") }}
+                    </div>
+                </div>
+
+                <!-- Message -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-envelope mr-1"></i> Message
+                    </label>
+                    <div class="mt-1">
+                        {{ form.message(class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white", rows="8", id="message") }}
+                    </div>
+                    <div id="template-preview" class="mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-md hidden text-gray-800 dark:text-gray-100">
+                        <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Preview:</h4>
+                        <div class="prose dark:prose-invert max-w-none" id="preview-content"></div>
+                    </div>
+                </div>
+
+                <!-- Resume Upload -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-file-pdf mr-1"></i> Resume
+                    </label>
+                    <div class="mt-1">
+                        {{ form.resume(class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 dark:file:bg-indigo-900/50 file:text-indigo-700 dark:file:text-indigo-300 hover:file:bg-indigo-100 dark:hover:file:bg-indigo-800/50") }}
+                    </div>
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Upload your resume in PDF format</p>
+                </div>
+
+                <!-- Send Button -->
+                <div class="flex items-center justify-between pt-4">
+                    <div class="text-sm text-gray-500 dark:text-gray-400" id="send-info">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Upload an email list to get started
+                    </div>
+                    {{ form.submit(class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800") }}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Features Card -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6 hover-scale">
+            <div class="text-indigo-600 dark:text-indigo-400 mb-4">
+                <i class="fas fa-bolt text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white">Fast & Efficient</h3>
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Send bulk emails quickly and efficiently with our optimized sending system</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6 hover-scale">
+            <div class="text-indigo-600 dark:text-indigo-400 mb-4">
+                <i class="fas fa-shield-alt text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white">Secure & Reliable</h3>
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Your data is protected with industry-standard security measures</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6 hover-scale">
+            <div class="text-indigo-600 dark:text-indigo-400 mb-4">
+                <i class="fas fa-chart-line text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white">Track & Monitor</h3>
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Monitor your email campaigns with detailed analytics and reports</p>
+        </div>
+    </div>
+</div>
+
+<script>
+// Email template data
+const templates = {
+    devops: {
+        subject: "Application for DevOps Engineer Position",
+        message: `Dear Hiring Manager,\n\nI am writing to express my interest in the DevOps Engineer position at your esteemed organization. My experience includes:\n\n- Designing and maintaining CI/CD pipelines (Jenkins, GitLab CI, GitHub Actions)\n- Managing cloud infrastructure (AWS, Azure, GCP)\n- Infrastructure as Code (Terraform, Ansible, CloudFormation)\n- Containerization and orchestration (Docker, Kubernetes, Helm)\n- Monitoring and logging (Prometheus, Grafana, ELK Stack)\n- Scripting and automation (Python, Bash, Go)\n- Security best practices and DevSecOps\n\nPlease find my resume attached. I look forward to discussing how my skills can help drive your DevOps initiatives.\n\nBest regards,\n[Your Name]`
+    },
+    python: {
+        subject: "Application for Python Software Developer Position",
+        message: `Dear Hiring Manager,\n\nI am excited to apply for the Python Software Developer role. My background includes:\n\n- Building scalable backend systems and RESTful APIs (Django, Flask, FastAPI)\n- Data processing and ETL (Pandas, NumPy, SQLAlchemy)\n- Cloud-native development (AWS Lambda, GCP Functions)\n- Test-driven development and CI/CD\n- Automation and scripting\n- Frontend integration (React, Vue.js)\n- Agile and remote team collaboration\n\nPlease find my resume attached. I would welcome the chance to discuss my fit for your team.\n\nSincerely,\n[Your Name]`
+    },
+    kubernetes: {
+        subject: "Application for Kubernetes Engineer Position",
+        message: `Dear Hiring Manager,\n\nI am applying for the Kubernetes Engineer position. My expertise includes:\n\n- Designing and operating Kubernetes clusters (on-premises and cloud: EKS, AKS, GKE)\n- Helm chart development and deployment\n- Service mesh (Istio, Linkerd)\n- CI/CD integration with Kubernetes\n- Observability (Prometheus, Grafana, Jaeger)\n- Security and RBAC in Kubernetes\n- Troubleshooting and performance tuning\n\nPlease find my resume attached. I look forward to contributing to your cloud-native journey.\n\nBest regards,\n[Your Name]`
+    },
+    openstack: {
+        subject: "Application for OpenStack Engineer Position",
+        message: `Dear Hiring Manager,\n\nI am writing to express my interest in the OpenStack Engineer role. My skills include:\n\n- Deploying and managing OpenStack environments (Nova, Neutron, Cinder, Swift)\n- Automation with Ansible and Heat\n- Integrating OpenStack with Ceph and SDN solutions\n- Monitoring and troubleshooting OpenStack services\n- Upgrades, scaling, and high availability\n- Scripting (Python, Bash)\n\nPlease find my resume attached. I am eager to help optimize and scale your OpenStack infrastructure.\n\nSincerely,\n[Your Name]`
+    },
+    ceph: {
+        subject: "Application for Ceph Storage Engineer Position",
+        message: `Dear Hiring Manager,\n\nI am applying for the Ceph Storage Engineer position. My experience includes:\n\n- Designing, deploying, and maintaining Ceph clusters (RADOS, RBD, CephFS, RGW)\n- Integrating Ceph with OpenStack and Kubernetes\n- Performance tuning and troubleshooting\n- Data protection, replication, and disaster recovery\n- Monitoring (Ceph Dashboard, Prometheus)\n- Automation (Ansible, SaltStack)\n\nPlease find my resume attached. I look forward to supporting your storage needs with Ceph.\n\nBest regards,\n[Your Name]`
+    },
+    linux: {
+        subject: "Application for Linux Engineer Position",
+        message: `Dear Hiring Manager,\n\nI am excited to apply for the Linux Engineer role. My qualifications include:\n\n- Advanced Linux system administration (RHEL, Ubuntu, CentOS)\n- Shell scripting and automation (Bash, Python)\n- Configuration management (Ansible, Puppet, Chef)\n- Networking, firewalls, and security hardening\n- System monitoring and troubleshooting (Nagios, Zabbix, Prometheus)\n- Virtualization (KVM, VMware, LXC)\n\nPlease find my resume attached. I look forward to helping maintain and secure your Linux infrastructure.\n\nSincerely,\n[Your Name]`
+    }
+};
+
+const templateSelect = document.getElementById('template-select');
+const subjectInput = document.getElementById('subject');
+const messageInput = document.getElementById('message');
+const previewBtn = document.getElementById('show-preview-btn');
+const previewDiv = document.getElementById('template-preview');
+const previewContent = document.getElementById('preview-content');
+
+// LocalStorage keys
+const LS_TEMPLATE = 'bulkemail_template';
+const LS_SUBJECT = 'bulkemail_subject';
+const LS_MESSAGE = 'bulkemail_message';
+
+// Restore form state from localStorage
+window.addEventListener('DOMContentLoaded', function() {
+    if (localStorage.getItem(LS_TEMPLATE)) {
+        templateSelect.value = localStorage.getItem(LS_TEMPLATE);
+        templateSelect.dispatchEvent(new Event('change'));
+    }
+    if (localStorage.getItem(LS_SUBJECT)) {
+        subjectInput.value = localStorage.getItem(LS_SUBJECT);
+    }
+    if (localStorage.getItem(LS_MESSAGE)) {
+        messageInput.value = localStorage.getItem(LS_MESSAGE);
+    }
+});
+
+// Save form state to localStorage on change
+if (templateSelect) {
+    templateSelect.addEventListener('change', function() {
+        const val = this.value;
+        if (templates[val]) {
+            subjectInput.value = templates[val].subject;
+            messageInput.value = templates[val].message;
+            localStorage.setItem(LS_SUBJECT, templates[val].subject);
+            localStorage.setItem(LS_MESSAGE, templates[val].message);
+        } else {
+            subjectInput.value = '';
+            messageInput.value = '';
+        }
+        localStorage.setItem(LS_TEMPLATE, this.value);
+        previewDiv.classList.add('hidden');
+    });
+}
+if (subjectInput) {
+    subjectInput.addEventListener('input', function() {
+        localStorage.setItem(LS_SUBJECT, this.value);
+    });
+}
+if (messageInput) {
+    messageInput.addEventListener('input', function() {
+        localStorage.setItem(LS_MESSAGE, this.value);
+    });
+}
+
+if (previewBtn) {
+    previewBtn.addEventListener('click', function() {
+        const val = templateSelect.value;
+        if (templates[val]) {
+            previewContent.innerHTML = `<strong>Subject:</strong> ${templates[val].subject}<br><br><pre class='text-gray-800 dark:text-gray-100' style='white-space:pre-wrap;'>${templates[val].message}</pre>`;
+            previewDiv.classList.remove('hidden');
+        } else {
+            previewContent.innerHTML = 'Select a template to preview.';
+            previewDiv.classList.remove('hidden');
+        }
+    });
+}
+
+// Email count logic (optional, for user feedback)
+const emailListInput = document.getElementById('email_list');
+const emailCountInfo = document.getElementById('email-count-info');
+if (emailListInput) {
+    emailListInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file && file.name.endsWith('.csv')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                const lines = text.split('\n').filter(line => line.trim()).length - 1;
+                emailCountInfo.textContent = lines > 0 ? `${lines} email addresses found` : 'No email addresses found';
+            };
+            reader.readAsText(file);
+        } else {
+            emailCountInfo.textContent = 'Upload an Excel or CSV file with email addresses in the first column';
+        }
+    });
+}
+</script>
+{% endblock %} 

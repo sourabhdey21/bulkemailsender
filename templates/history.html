@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <h1 class="text-2xl font-bold mb-6">Sent Email History</h1>
+    {% if history and history|length > 0 %}
+    <table class="min-w-full bg-white dark:bg-gray-800 rounded shadow">
+        <thead>
+            <tr>
+                <th class="py-2 px-4 text-left">To</th>
+                <th class="py-2 px-4 text-left">Subject</th>
+                <th class="py-2 px-4 text-left">Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for h in history %}
+            <tr class="border-t border-gray-200 dark:border-gray-700">
+                <td class="py-2 px-4">{{ h.to }}</td>
+                <td class="py-2 px-4">{{ h.subject }}</td>
+                <td class="py-2 px-4">{{ h.time }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="text-gray-500 dark:text-gray-400">No emails sent yet.</div>
+    {% endif %}
+</div>
+{% endblock %} 

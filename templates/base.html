@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Email Sender Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://unpkg.com/alpinejs" defer></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .dark {
+            color-scheme: dark;
+        }
+        .dark body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        }
+        .hover-scale {
+            transition: transform 0.2s;
+        }
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .dark .glass-effect {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen" id="main-body">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center space-x-2">
+                        <i class="fas fa-paper-plane text-indigo-600 dark:text-indigo-400 text-2xl"></i>
+                        <span class="text-xl font-bold text-gray-900 dark:text-white">Bulk Email Pro</span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/templates" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-file-alt mr-1"></i> Templates
+                    </a>
+                    <a href="/history" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-history mr-1"></i> History
+                    </a>
+                    <a href="/configure" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-cog mr-1"></i> Settings
+                    </a>
+                    <button id="theme-toggle-btn" class="p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i id="theme-toggle-icon" class="fas"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <!-- Flash Messages -->
+        <div x-data="{ show: true }" x-show="show" x-transition class="mb-4">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="p-4 rounded-md {% if category == 'error' %}bg-red-50 dark:bg-red-900/50 text-red-700 dark:text-red-200{% else %}bg-green-50 dark:bg-green-900/50 text-green-700 dark:text-green-200{% endif %} flex items-center justify-between">
+                            <div class="flex items-center">
+                                <i class="fas {% if category == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %} mr-2"></i>
+                                {{ message }}
+                            </div>
+                            <button @click="show = false" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        <!-- Page Content -->
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-800 shadow-sm mt-8">
+        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <div class="text-sm text-gray-500 dark:text-gray-400">
+                    <i class="fas fa-shield-alt mr-1"></i> Secure Email Sending
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                        <i class="fas fa-question-circle"></i>
+                    </a>
+                    <a href="#" class="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                        <i class="fas fa-bug"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // Theme toggle logic
+    function setTheme(dark) {
+        const body = document.getElementById('main-body');
+        if (dark) {
+            body.classList.add('dark');
+            localStorage.setItem('bulkemail_theme', 'dark');
+            document.getElementById('theme-toggle-icon').className = 'fas fa-sun';
+        } else {
+            body.classList.remove('dark');
+            localStorage.setItem('bulkemail_theme', 'light');
+            document.getElementById('theme-toggle-icon').className = 'fas fa-moon';
+        }
+    }
+
+    function toggleTheme() {
+        const isDark = document.getElementById('main-body').classList.contains('dark');
+        setTheme(!isDark);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set initial theme
+        const savedTheme = localStorage.getItem('bulkemail_theme');
+        setTheme(savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches));
+        // Button click
+        document.getElementById('theme-toggle-btn').addEventListener('click', toggleTheme);
+    });
+    </script>
+</body>
+</html> 

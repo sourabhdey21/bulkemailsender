@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <h1 class="text-2xl font-bold mb-6">Available Email Templates</h1>
+    <div class="grid gap-6">
+        {% for t in templates %}
+        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+            <h2 class="text-lg font-semibold text-indigo-700 dark:text-indigo-300">{{ t.title }}</h2>
+            <div class="mt-2 text-sm text-gray-700 dark:text-gray-200"><strong>Subject:</strong> {{ t.subject }}</div>
+            <div class="mt-2 p-3 bg-gray-50 dark:bg-gray-900 rounded text-gray-800 dark:text-gray-100 whitespace-pre-line">{{ t.message }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

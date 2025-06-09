@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header Card -->
+    <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
+        <div class="gradient-bg p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold">Email Configuration</h1>
+                    <p class="mt-1 text-indigo-100">Set up your email settings for sending bulk emails</p>
+                </div>
+                <div class="hidden md:block">
+                    <i class="fas fa-cog text-4xl text-white/80"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configuration Form -->
+    <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
+        <div class="p-6">
+            <form method="POST" class="space-y-6" x-data="{ showPassword: false }">
+                <!-- Email Provider Selection -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-envelope mr-1"></i> Email Provider
+                    </label>
+                    <select class="block w-full rounded-md border-gray-300 dark:border-gray-600 
+                        shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm
+                        dark:bg-gray-700 dark:text-white" 
+                        onchange="updateSMTP(this.value)">
+                        <option value="gmail">Gmail</option>
+                        <option value="outlook">Outlook</option>
+                        <option value="yahoo">Yahoo</option>
+                        <option value="custom">Custom SMTP</option>
+                    </select>
+                </div>
+
+                <!-- Email Address -->
+                <div class="space-y-2">
+                    <label for="email_user" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-at mr-1"></i> Email Address
+                    </label>
+                    <div class="mt-1">
+                        <input type="email" name="email_user" id="email_user" required
+                               value="{{ config.email_user if config else '' }}"
+                               class="block w-full rounded-md border-gray-300 dark:border-gray-600 
+                               shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm
+                               dark:bg-gray-700 dark:text-white"
+                               placeholder="your.email@example.com">
+                    </div>
+                </div>
+
+                <!-- App Password -->
+                <div class="space-y-2">
+                    <label for="email_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-key mr-1"></i> App Password
+                    </label>
+                    <div class="mt-1 relative">
+                        <input :type="showPassword ? 'text' : 'password'" 
+                               name="email_password" id="email_password" required
+                               value="{{ config.email_password if config else '' }}"
+                               class="block w-full rounded-md border-gray-300 dark:border-gray-600 
+                               shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm
+                               dark:bg-gray-700 dark:text-white pr-10"
+                               placeholder="Enter your app password">
+                        <button type="button" @click="showPassword = !showPassword"
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-500">
+                            <i class="fas" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                        </button>
+                    </div>
+                    <div class="mt-2 space-y-2">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            For Gmail, you need to use an App Password. 
+                            <a href="https://support.google.com/accounts/answer/185833" 
+                               target="_blank" 
+                               class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500">
+                                Learn how to create one
+                            </a>
+                        </p>
+                        <div class="bg-yellow-50 dark:bg-yellow-900/50 p-4 rounded-md">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                                        Security Note
+                                    </h3>
+                                    <div class="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
+                                        <p>Your credentials are stored securely on your local machine and are never sent to our servers.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SMTP Settings -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">SMTP Settings</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label for="smtp_server" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                <i class="fas fa-server mr-1"></i> SMTP Server
+                            </label>
+                            <div class="mt-1">
+                                <input type="text" name="smtp_server" id="smtp_server" required
+                                       value="{{ config.smtp_server if config else 'smtp.gmail.com' }}"
+                                       class="block w-full rounded-md border-gray-300 dark:border-gray-600 
+                                       shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm
+                                       dark:bg-gray-700 dark:text-white">
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label for="smtp_port" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                <i class="fas fa-plug mr-1"></i> SMTP Port
+                            </label>
+                            <div class="mt-1">
+                                <input type="number" name="smtp_port" id="smtp_port" required
+                                       value="{{ config.smtp_port if config else '587' }}"
+                                       class="block w-full rounded-md border-gray-300 dark:border-gray-600 
+                                       shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm
+                                       dark:bg-gray-700 dark:text-white">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Test Connection -->
+                <div class="pt-4">
+                    <button type="button" id="test-connection-btn"
+                            class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 
+                            shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 
+                            bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        <i class="fas fa-vial mr-2"></i>
+                        Test Connection
+                    </button>
+                    <span id="test-connection-result" class="ml-4 text-sm"></span>
+                </div>
+
+                <!-- Save Button -->
+                <div class="flex justify-end pt-4">
+                    <button type="submit" 
+                            class="inline-flex items-center px-4 py-2 border border-transparent 
+                            shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 
+                            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
+                            dark:focus:ring-offset-gray-800">
+                        <i class="fas fa-save mr-2"></i>
+                        Save Configuration
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Help Card -->
+    <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
+        <div class="p-6">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                <i class="fas fa-question-circle mr-2"></i>
+                Common Email Provider Settings
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 bg-gray-50 dark:bg-gray-900 rounded-md">
+                    <h4 class="font-medium text-gray-900 dark:text-white">Gmail</h4>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                        Server: smtp.gmail.com<br>
+                        Port: 587<br>
+                        Requires App Password
+                    </p>
+                </div>
+                <div class="p-4 bg-gray-50 dark:bg-gray-900 rounded-md">
+                    <h4 class="font-medium text-gray-900 dark:text-white">Outlook</h4>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                        Server: smtp.office365.com<br>
+                        Port: 587<br>
+                        Use your account password
+                    </p>
+                </div>
+                <div class="p-4 bg-gray-50 dark:bg-gray-900 rounded-md">
+                    <h4 class="font-medium text-gray-900 dark:text-white">Yahoo</h4>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                        Server: smtp.mail.yahoo.com<br>
+                        Port: 587<br>
+                        Requires App Password
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateSMTP(provider) {
+    const settings = {
+        gmail: { server: 'smtp.gmail.com', port: '587' },
+        outlook: { server: 'smtp.office365.com', port: '587' },
+        yahoo: { server: 'smtp.mail.yahoo.com', port: '587' },
+        custom: { server: '', port: '' }
+    };
+    
+    document.getElementById('smtp_server').value = settings[provider].server;
+    document.getElementById('smtp_port').value = settings[provider].port;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const btn = document.getElementById('test-connection-btn');
+    const result = document.getElementById('test-connection-result');
+    btn.addEventListener('click', async function() {
+        result.textContent = 'Testing...';
+        result.className = 'ml-4 text-sm text-gray-500';
+        const email_user = document.getElementById('email_user').value;
+        const email_password = document.getElementById('email_password').value;
+        const smtp_server = document.getElementById('smtp_server').value;
+        const smtp_port = document.getElementById('smtp_port').value;
+        try {
+            const response = await fetch('/test-connection', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email_user, email_password, smtp_server, smtp_port })
+            });
+            const data = await response.json();
+            if (data.success) {
+                result.textContent = data.message;
+                result.className = 'ml-4 text-sm text-green-600';
+            } else {
+                result.textContent = data.message;
+                result.className = 'ml-4 text-sm text-red-600';
+            }
+        } catch (err) {
+            result.textContent = 'Error testing connection.';
+            result.className = 'ml-4 text-sm text-red-600';
+        }
+    });
+});
+</script>
+{% endblock %} 
